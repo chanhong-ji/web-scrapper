@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{url_for("static", filename="css/style.css")}}" type="text/css">
+    <title>Home</title>
+  </head>
+  <body>
+    <header>
+        <h1>Job Search Engine</h1>
+        <form action="/search" method="get">
+            <input class="search_bar" name="keyword" required placeholder="Write a keyword..."></input>
+        </form>
+        <div class="tags">
+            <span>#reactjs</span>
+            <span>#python</span>
+        </div>
+    </header>
+    <main>
+        {% if keyword %}
+        <h2>Found {{resultsNum}} results for: {{keyword}}</h2>
+        {% endif %}
+        <a href="/export?keyword={{keyword}}">Export to CSV</a>
+        <section>
+            {% for job in jobs %}
+                <div class="job_box">
+                    <div class="job_column">
+                        <span>{{job.company}}</span>
+                        <span>{{job.location}}</span>
+                    </div>
+                    <div class="job_column">
+                        <span>{{job.title}}</span>
+                        <p>explantaion......</p>
+                        <a href="{{job.url}}">Link</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+    </main>
+  </body>
+</html>
