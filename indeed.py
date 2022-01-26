@@ -8,15 +8,18 @@ def get_last_page(word, place):
     )
     html = requests.get(BASE_URL)
     soup = BeautifulSoup(html.text, "html.parser")
-    max_page = (
-        int(
-            soup.find("div", {"class", "resultsTop"})
-            .find(id="searchCountPages")
-            .string.split()[-1][:-1]
+    try:
+        max_page = (
+            int(
+                soup.find("div", {"class", "resultsTop"})
+                .find(id="searchCountPages")
+                .string.split()[-1][:-1]
+            )
+            // 10
         )
-        // 10
-    )
-    return max_page
+        return max_page
+    except:
+        return -1
 
 
 def extract_job(result):
@@ -24,17 +27,26 @@ def extract_job(result):
     exp = ""
     for content in exp_contents:
         exp += content.string
+    exp = "..." + exp.replace(",", " ")
     info = result.find("td", {"class", "resultContent"})
-    title = info.find("h2", {"class", "jobTitle"}).find("span", class_=None).string
-    location = info.find("div", {"class", "companyLocation"}).string
+    title = (
+        info.find("h2", {"class", "jobTitle"})
+        .find("span", class_=None)
+        .string.replace(",", " ")
+    )
+    location = info.find("div", {"class", "companyLocation"}).string.replace(",", " ")
     url = "https://kr.indeed.com" + result.parent["href"]
     try:
         if info.find("span", {"class", "companyName"}).find("a"):
-            company = info.find("span", {"class", "companyName"}).find("a").text
+            company = (
+                info.find("span", {"class", "companyName"})
+                .find("a")
+                .text.replace(",", " ")
+            )
         else:
-            company = info.find("span", {"class", "companyName"}).text
+            company = info.find("span", {"class", "companyName"}).text.replace(",", " ")
     except:
-        company = ""
+        company = "from detail..."
     return {
         "title": title,
         "company": company,
